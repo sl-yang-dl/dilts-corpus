@@ -1,71 +1,74 @@
-// 把仓库根目录的数据,同步进 VitePress 站点:
-//   1) data/quotes.csv, data/terms.csv -> site/quotes.ts, site/terms.ts(结构化数据,供 Vue 组件渲染)
-//   2) 生成组件宿主页 site/{index,quotes,terms}.md(用 layout:page 承载自定义组件)
-//   3) README.md -> site/about.md
-// 在 site/ 下执行 `npm run sync`(即 node ../scripts/sync.mjs)时,路径以本文件位置为基准。
+// scripts/sync.mjs
+// 把 data/*.csv 同步进 VitePress 站点:
+//   1) 解析为结构化数据 -> site/quotes.ts / terms.ts / books.ts(供组件渲染)
+//   2) 生成承载组件的极简页面:index/quotes/terms/books/about(.md)
+//   3) about 页内容来自 content/bio.md(迪尔茨生平),而非项目 README
 import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
-const root = path.resolve(__dirname, '..') // 仓库根
-const site = path.join(root, 'site')
+const ROOT = path.resolve(__dirname, '..')
+const SITE = path.join(ROOT, 'site')
 
-// ---- 极简 CSV 解析(支持引号包裹、字段内逗号)----
+// 极简 CSV 解析:支持引号包裹与字段内逗号
 function parseCSV(text) {
   const rows = []
   let row = [], field = '', inQ = false
   for (let i = 0; i < text.length; i++) {
     const c = text[i]
     if (inQ) {
-      if (c === '"') {
-        if (text[i + 1] === '"') { field += '"'; i++ } else inQ = false
-      } else field += c
-    } else if (c === '"') inQ = true
-    else if (c === ',') { row.push(field); field = '' }
-    else if (c === '\n' || c === '\r') {
-      if (c === '\r' && text[i + 1] === '\n') i++
-      row.push(field); rows.push(row); row = []; field = ''
-    } else field += c
+      if (c === '"' && text[i + 1] === '"') { field += '"'; i++ }
+      else if (c === '"') inQ = false
+      else field += c
+    } else {
+      if (c === '"') inQ = true
+      else if (c === ',') { row.push(field); field = '' }
+      else if (c === '\n') { row.push(field); rows.push(row); row = []; field = '' }
+      else if (c === '\r') { /* skip */ }
+      else field += c
+    }
   }
   if (field.length || row.length) { row.push(field); rows.push(row) }
-  const header = rows.shift() || []
-  return rows
-    .filter((r) => r.length > 1 || (r.length === 1 && r[0] !== ''))
-    .map((r) => {
-      const o = {}
-      header.forEach((h, j) => (o[h.trim()] = (r[j] ?? '').trim()))
-      return o
-    })
+  const head = rows.shift().map((h) => h.trim())
+  return rows.filter((r) => r.length > 1 || r[0].trim()).map((r) => {
+    const o = {}
+    head.forEach((h, i) => { o[h] = (r[i] ?? '').trim() })
+    return o
+  })
 }
 
-const quotes = parseCSV(fs.readFileSync(path.join(root, 'data', 'quotes.csv'), 'utf8'))
-const terms = parseCSV(fs.readFileSync(path.join(root, 'data', 'terms.csv'), 'utf8'))
+function toTSArray(name, arr) {
+  return `export const ${name} = ${JSON.stringify(arr, null, 2)}\n`
+}
 
-fs.writeFileSync(
-  path.join(site, 'quotes.ts'),
-  `// 由 scripts/sync.mjs 从 data/quotes.csv 自动生成,勿手改\nexport const quotes = ${JSON.stringify(quotes, null, 2)};\n`
-)
-fs.writeFileSync(
-  path.join(site, 'terms.ts'),
-  `// 由 scripts/sync.mjs 从 data/terms.csv 自动生成,勿手改\nexport const terms = ${JSON.stringify(terms, null, 2)};\n`
-)
-console.log(`[sync] quotes.ts (${quotes.length}) + terms.ts (${terms.length})`)
+function writeFile(rel, content) {
+  const p = path.join(SITE, rel)
+  fs.mkdirSync(path.dirname(p), { recursive: true })
+  fs.writeFileSync(p, content, 'utf-8')
+}
 
-// 组件宿主页(layout: page 全宽承载自定义组件)
-fs.writeFileSync(
-  path.join(site, 'index.md'),
-  `---\nlayout: page\ntitle: 罗伯特·迪尔茨语录集\n---\n\n<HomeQuote />\n`
-)
-fs.writeFileSync(
-  path.join(site, 'quotes.md'),
-  `---\nlayout: page\ntitle: 语录集\n---\n\n<QuoteList />\n`
-)
-fs.writeFileSync(
-  path.join(site, 'terms.md'),
-  `---\nlayout: page\ntitle: 术语集\n---\n\n<TermList />\n`
-)
+function readCSV(name) {
+  return parseCSV(fs.readFileSync(path.join(ROOT, 'data', name), 'utf-8'))
+}
 
-// 关于页(来自 README)
-fs.copyFileSync(path.join(root, 'README.md'), path.join(site, 'about.md'))
-console.log('[sync] index/quotes/terms/about 页已生成')
+// ---- 1. 结构化数据 ----
+const quotes = readCSV('quotes.csv')
+const terms = readCSV('terms.csv')
+const books = readCSV('books.csv')
+writeFile('quotes.ts', toTSArray('quotes', quotes))
+writeFile('terms.ts', toTSArray('terms', terms))
+writeFile('books.ts', toTSArray('books', books))
+console.log(`[sync] quotes.ts (${quotes.length}) + terms.ts (${terms.length}) + books.ts (${books.length})`)
+
+// ---- 2. 页面 ----
+writeFile('index.md', `---\nlayout: page\n---\n\n<HomeQuote />\n`)
+writeFile('quotes.md', `---\nlayout: page\n---\n\n<QuoteList />\n`)
+writeFile('terms.md', `---\nlayout: page\n---\n\n<TermList />\n`)
+writeFile('books.md', `---\nlayout: page\n---\n\n<BookList />\n`)
+
+// about 页内容 = 迪尔茨生平(content/bio.md),而非项目 README
+const bio = fs.readFileSync(path.join(ROOT, 'content', 'bio.md'), 'utf-8')
+writeFile('about.md', `---\nlayout: page\ntitle: 关于罗伯特·迪尔茨\n---\n\n${bio}\n`)
+
+console.log('[sync] index/quotes/terms/books/about 页已生成')

@@ -2,6 +2,7 @@
 import { ref, computed, onMounted } from 'vue'
 import { quotes } from '../../quotes'
 import { terms } from '../../terms'
+import { books } from '../../books'
 
 const idx = ref(0)
 const featured = computed(() => quotes[idx.value])
@@ -34,12 +35,14 @@ const themeCount = new Set(quotes.map((q) => q.theme)).size
       <div><b>{{ quotes.length }}</b>条语录</div>
       <div><b>{{ terms.length }}</b>个术语</div>
       <div><b>{{ themeCount }}</b>个主题</div>
+      <div><b>{{ books.length }}</b>部作品</div>
     </div>
 
     <div class="home-actions">
       <button class="btn primary" @click="pick">换一条 🎲</button>
       <a class="btn" href="./quotes.html">浏览全部语录</a>
       <a class="btn" href="./terms.html">术语集</a>
+      <a class="btn" href="./books.html">作品一览</a>
     </div>
   </div>
 </template>

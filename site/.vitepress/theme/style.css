@@ -126,6 +126,10 @@ html, body { background: var(--paper); }
   border-radius: 8px; padding: 0.25rem 0.6rem; font-size: 0.78rem; cursor: pointer;
 }
 .q-card .copy:hover { border-color: var(--seal); color: var(--seal); }
+.q-card .meta {
+  margin: 0.4rem 0 0.2rem; font-size: 0.78rem; color: var(--ink-soft);
+  border-left: 2px solid var(--seal-soft); padding-left: 0.5rem;
+}
 .q-card.flash { animation: flash 1.1s ease; }
 @keyframes flash { 0%,100%{ box-shadow:none } 30%{ box-shadow:0 0 0 3px var(--seal-soft) } }
 
@@ -150,5 +154,17 @@ html, body { background: var(--paper); }
 
 .empty { text-align: center; color: var(--ink-soft); padding: 3rem 0; }
 
-/* 页面顶部标题(组件页)留白更克制 */
-.VPDoc .vp-doc > div:first-child { margin-top: 0; }
+/* ---------- 作品卡片 ---------- */
+.b-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px,1fr)); gap: 1rem; max-width: 1100px; margin: 1.6rem auto 0; padding: 0 24px; }
+.b-card { background: var(--paper-2); border: 1px solid var(--line); border-radius: 14px; padding: 1.1rem 1.2rem; display: flex; flex-direction: column; gap: 0.35rem; }
+.b-card .b-top { display: flex; align-items: baseline; justify-content: space-between; gap: 0.5rem; }
+.b-card .b-title { font-family: var(--serif); font-size: 1.08rem; color: var(--ink); }
+.b-card .b-year { color: var(--seal); font-size: 0.85rem; white-space: nowrap; }
+.b-card .b-en { color: var(--ink-soft); font-size: 0.82rem; font-style: italic; }
+.b-card .b-role { display: inline-block; font-size: 0.72rem; color: var(--b-high); background: #e3f1e8; border-radius: 999px; padding: 0.12rem 0.5rem; width: fit-content; }
+.b-card .b-intro { color: var(--ink-soft); line-height: 1.7; font-size: 0.92rem; margin-top: 0.2rem; }
+.b-card .foot { margin-top: auto; padding-top: 0.6rem; display: flex; justify-content: space-between; align-items: center; }
+.b-card .src { font-size: 0.74rem; color: var(--ink-soft); }
+.b-card .copy { border: 1px solid var(--line); background: transparent; color: var(--ink-soft); border-radius: 8px; padding: 0.25rem 0.6rem; font-size: 0.76rem; cursor: pointer; }
+.b-card .copy:hover { border-color: var(--seal); color: var(--seal); }
+

@@ -1,155 +1,191 @@
 # -*- coding: utf-8 -*-
-"""罗伯特·迪尔茨 语录集 · 单一数据源生成器。
-
-日常只维护两个 CSV(手动往里追加行即可):
-  - data/quotes.csv  语录(观点 / 金句 / 模型 / 著作 ……),字段见首行
-  - data/terms.csv   术语(专有名词),字段见首行
-
-改完跑一次 `python3 build_kb.py`,自动同步产出:
-  - 语录集.md          按主题归类的可读语录集(门面)
-  - 术语集.md          NLP / 迪尔茨专有名词表
-  - 05-knowledge.jsonl 向量化友好检索单元(grill-me / 网站共用)
-  - 05-structured.md   同上的人类可读问答对
-
-检索端 retriever.py 读取 05-knowledge.jsonl,无需改动。
 """
-import json, os, csv
+语录集生成器(单一数据源 = data/*.csv)
 
-HERE = os.path.dirname(os.path.abspath(__file__))
-QUOTES_CSV = os.path.join(HERE, "data", "quotes.csv")
-TERMS_CSV = os.path.join(HERE, "data", "terms.csv")
+- data/quotes.csv : 语录/观点/模型/误传(每条可带 date、occasion 元信息)
+- data/terms.csv  : 术语(解释性)
+- data/books.csv  : 作品集(所有作品一览 + 简介)
 
-# 语录集章节优先顺序(其余主题按出现顺序补在末尾)
-THEME_ORDER = [
-    "逻辑层次", "愿景与领导力", "迪士尼策略", "信念",
-    "语言魔术 / 回应术", "英雄之旅", "模型仿效 / 系统派 NLP",
-    "学习策略", "感知位置", "著作", "常见误传(勿归于迪尔茨)", "待核验",
-]
+产出:
+- 语录集.md         人类可读的语录墙正文
+- 术语集.md         术语解释
+- 05-knowledge.jsonl  给 grill-me 检索用的结构化记录(语录+术语+作品)
+- 05-structured.md    按类别分组的结构化整理
 
-# 结构化分组(供 05-structured.md / jsonl)
-CAT_GROUPS = {
-    "quote": "一、语录(观点表述)",
-    "quote_pending": "二、待核验语录",
-    "avoid": "三、常见误传(避坑,勿引用)",
-    "model": "四、模型与方法论",
-    "excerpt": "五、书籍原话摘录",
-    "book": "六、著作与内容",
-    "term": "七、术语集(NLP / 迪尔茨专有名词)",
-}
+用法:  python3 build_kb.py
+"""
+import csv, json, os, sys
 
-BADGE = {"high": "✅", "pending": "⚠️", "avoid": "❓"}
+ROOT = os.path.dirname(os.path.abspath(__file__))
+DATA = os.path.join(ROOT, 'data')
 
 
-def load_quotes():
-    with open(QUOTES_CSV, encoding="utf-8") as f:
-        return list(csv.DictReader(f))
-
-
-def load_terms():
-    with open(TERMS_CSV, encoding="utf-8") as f:
+def load(name):
+    path = os.path.join(DATA, name)
+    if not os.path.exists(path):
+        print(f'[warn] 缺少 {name},跳过', file=sys.stderr)
+        return []
+    with open(path, encoding='utf-8') as f:
         return list(csv.DictReader(f))
 
 
 def to_records():
-    """把 CSV 统一成检索记录(id/category/theme/topic/question/answer/source/confidence)。"""
     recs = []
-    for r in load_quotes():
-        recs.append(dict(
-            id=r["id"], category=r["category"], theme=r["theme"], topic=r.get("topic", ""),
-            question=r["zh"], answer=r["zh"],
-            source=r["source"], confidence=r["confidence"],
-        ))
-    for t in load_terms():
-        recs.append(dict(
-            id=t["id"], category="term", theme="术语", topic=t["zh"],
-            question=f"{t['zh']}({t.get('en','')}) 是什么?",
-            answer=t["definition"],
-            source=t["source"], confidence=t["confidence"],
-        ))
+    for q in load('quotes.csv'):
+        recs.append({
+            'id': q['id'],
+            'category': q['category'],
+            'theme': q['theme'],
+            'topic': q.get('topic', ''),
+            'question': q['zh'],
+            'answer': q['zh'],
+            'source': q['source'],
+            'confidence': q['confidence'],
+            'date': q.get('date', ''),
+            'occasion': q.get('occasion', ''),
+        })
+    for t in load('terms.csv'):
+        recs.append({
+            'id': t['id'],
+            'category': 'term',
+            'theme': '术语',
+            'topic': t['zh'],
+            'question': f"{t['zh']}({t['en']}) 是什么?",
+            'answer': t['definition'],
+            'source': t['source'],
+            'confidence': t['confidence'],
+            'date': '', 'occasion': '',
+        })
+    for b in load('books.csv'):
+        recs.append({
+            'id': b['id'],
+            'category': 'book',
+            'theme': '著作',
+            'topic': b['title'] or b['title_en'],
+            'question': f"{b['title'] or b['title_en']} 讲什么?",
+            'answer': b['intro'],
+            'source': b['source'],
+            'confidence': b['confidence'],
+            'date': '', 'occasion': '',
+        })
     return recs
 
 
-def theme_sequence(present):
-    known = [t for t in THEME_ORDER if t in present]
-    extra = sorted(t for t in present if t not in THEME_ORDER)
-    return known + extra
-
-
 def build_quotes_md(recs):
+    lines = ['# 罗伯特·迪尔茨语录集', '',
+             '> 按主题归类;每条标注出处与置信度。',
+             '> 置信度:✅ 可引用 / ⚠️ 待核验 / ❓ 误传勿引。', '']
     groups = {}
     for r in recs:
-        if r["category"] == "term":
+        if r['category'] in ('term', 'book'):
             continue
-        groups.setdefault(r["theme"], []).append(r)
-    seq = theme_sequence(groups.keys())
-    out = [
-        "# 罗伯特·迪尔茨语录集\n",
-        "> 收录迪尔茨在其著作与 NLP 体系中表述的观点与金句,按主题归类。\n",
-        "> 置信度:**✅ 可安全引用** · **⚠️ 待核验** · **❓ 误传勿引**。每条标注出处,便于溯源。\n",
-        "> 来源:02-models.md / 03-quotes.md / 04-sourced-excerpts.md(均经百度百科、豆瓣核验)。\n",
-        "> 本文件由 `build_kb.py` 从 `data/quotes.csv` 生成,往 CSV 追加语录后重跑即可同步。\n",
-    ]
-    for t in seq:
-        items = groups.get(t)
-        if not items:
-            continue
-        out.append(f"\n## {t}\n")
+        groups.setdefault(r['theme'], []).append(r)
+    for theme, items in groups.items():
+        lines += ['## ' + theme, '']
         for r in items:
-            b = BADGE.get(r["confidence"], "")
-            out.append(f"- {b} 「{r['answer']}」\n  _(出处:{r['source']})_\n")
-    return "\n".join(out)
+            badge = {'high': '✅', 'pending': '⚠️', 'avoid': '❓'}.get(r['confidence'], '')
+            meta = ''
+            if r['date'] or r['occasion']:
+                parts = []
+                if r['date']:
+                    parts.append(f"📅 {r['date']}")
+                if r['occasion']:
+                    parts.append(f"场合:{r['occasion']}")
+                meta = '  _(' + ' · '.join(parts) + ')_'
+            lines.append(f"- {badge} {r['question']}  —— 出处:{r['source']}{meta}")
+        lines.append('')
+    return '\n'.join(lines)
 
 
 def build_terms_md(terms):
-    out = [
-        "# 罗伯特·迪尔茨 术语集(NLP 专有名词)\n",
-        "> 收录迪尔茨体系中的关键术语:中文、英文原名、定义、相关概念与出处。\n",
-        "> 由 `build_kb.py` 从 `data/terms.csv` 生成,往 CSV 追加术语后重跑即可同步。\n",
-        "\n## 术语\n",
-    ]
+    lines = ['# 术语集', '',
+             '> 解释迪尔茨体系中的关键概念(含 NLP 基础概念)。', '']
     for t in terms:
-        en = t.get("en", "")
-        rel = t.get("related", "")
-        out.append(f"- **{t['zh']}** / {en}\n")
-        out.append(f"  定义:{t['definition']}\n")
-        if rel:
-            out.append(f"  相关:{rel}\n")
-        out.append(f"  出处:{t['source']}\n")
-    return "\n".join(out)
+        lines.append(f"## {t['zh']} / {t['en']}")
+        lines.append('')
+        lines.append(t['definition'])
+        extra = []
+        if t.get('related'):
+            extra.append(f"**相关:** {t['related']}")
+        if t.get('source'):
+            extra.append(f"**出处:** {t['source']}")
+        if extra:
+            lines.append('')
+            lines.append('  ' + '  '.join(extra))
+        lines.append('')
+    return '\n'.join(lines)
 
 
 def build_jsonl(recs):
-    with open(os.path.join(HERE, "05-knowledge.jsonl"), "w", encoding="utf-8") as f:
-        for r in recs:
-            f.write(json.dumps(r, ensure_ascii=False) + "\n")
+    out = []
+    for r in recs:
+        out.append(json.dumps({
+            'id': r['id'],
+            'category': r['category'],
+            'theme': r['theme'],
+            'topic': r['topic'],
+            'question': r['question'],
+            'answer': r['answer'],
+            'source': r['source'],
+            'confidence': r['confidence'],
+            'date': r.get('date', ''),
+            'occasion': r.get('occasion', ''),
+        }, ensure_ascii=False))
+    return '\n'.join(out)
+
+
+CAT_GROUPS = [
+    ('quote', '一、语录与观点'),
+    ('quote_pending', '二、待核验语录'),
+    ('model', '三、模型与框架'),
+    ('excerpt', '四、有出处的摘录'),
+    ('term', '五、术语'),
+    ('book', '六、著作与内容'),
+    ('avoid', '七、常见误传(勿归于迪尔茨)'),
+]
 
 
 def build_structured_md(recs):
-    groups = {}
+    lines = ['# 结构化整理', '']
+    by_cat = {}
     for r in recs:
-        groups.setdefault(r["category"], []).append(r)
-    out = ["# grill-me 检索问答对(结构化)\n",
-           "> 由 `build_kb.py` 从 `data/*.csv` 生成。每条含检索问句 + 答案 + 出处 + 置信度。\n",
-           f"> 共 {len(recs)} 条。置信度:high=可安全引用 / pending=待核 / avoid=误传勿引。\n"]
-    for cat, title in CAT_GROUPS.items():
-        items = groups.get(cat)
+        by_cat.setdefault(r['category'], []).append(r)
+    for cat, title in CAT_GROUPS:
+        items = by_cat.get(cat, [])
         if not items:
             continue
-        out.append(f"\n## {title}\n")
+        lines += [f'## {title}', '']
         for r in items:
-            out.append(f"**Q: {r['question']}**  _(id={r['id']}, 置信={r['confidence']}, 出处={r['source']})_\n")
-            out.append(f"> A: {r['answer']}\n")
-    return "\n".join(out)
+            head = f"[{r['theme']}] {r['question']}"
+            lines.append(f"- {head}")
+            lines.append(f"  - 答:{r['answer']}")
+            lines.append(f"  - 出处:{r['source']}  置信度:{r['confidence']}")
+            if r.get('date') or r.get('occasion'):
+                m = ' · '.join(x for x in [r.get('date', ''), r.get('occasion', '')] if x)
+                lines.append(f"  - 元信息:{m}")
+        lines.append('')
+    return '\n'.join(lines)
 
 
-if __name__ == "__main__":
+def main():
     recs = to_records()
-    terms = load_terms()
-    with open(os.path.join(HERE, "语录集.md"), "w", encoding="utf-8") as f:
+    terms = load('terms.csv')
+    os.makedirs(ROOT, exist_ok=True)
+    with open(os.path.join(ROOT, '语录集.md'), 'w', encoding='utf-8') as f:
         f.write(build_quotes_md(recs))
-    with open(os.path.join(HERE, "术语集.md"), "w", encoding="utf-8") as f:
+    with open(os.path.join(ROOT, '术语集.md'), 'w', encoding='utf-8') as f:
         f.write(build_terms_md(terms))
-    build_jsonl(recs)
-    with open(os.path.join(HERE, "05-structured.md"), "w", encoding="utf-8") as f:
+    with open(os.path.join(ROOT, '05-knowledge.jsonl'), 'w', encoding='utf-8') as f:
+        f.write(build_jsonl(recs))
+    with open(os.path.join(ROOT, '05-structured.md'), 'w', encoding='utf-8') as f:
         f.write(build_structured_md(recs))
-    print(f"生成完成: 语录集.md + 术语集.md + 05-knowledge.jsonl({len(recs)}条) + 05-structured.md")
+
+    n_book = sum(1 for r in recs if r['category'] == 'book')
+    n_term = sum(1 for r in recs if r['category'] == 'term')
+    n_q = sum(1 for r in recs if r['category'] not in ('term', 'book'))
+    print(f'[ok] 语录/观点 {n_q} 条 + 术语 {n_term} 条 + 作品 {n_book} 部 → '
+          f'语录集.md / 术语集.md / 05-knowledge.jsonl / 05-structured.md')
+
+
+if __name__ == '__main__':
+    main()

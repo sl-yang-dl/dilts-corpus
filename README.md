@@ -1,6 +1,6 @@
-# 罗伯特·迪尔茨语录集(语录 + 术语)
+# 罗伯特·迪尔茨语录集(语录 + 术语 + 作品)
 
-> 收录罗伯特·迪尔茨(Robert Dilts)在 NLP 与教练体系中的**观点、金句与术语**,按主题归类,每条标注出处与置信度。
+> 收录罗伯特·迪尔茨(Robert Dilts)在 NLP 与教练体系中的**观点、金句、术语与作品**,按主题归类,每条标注出处与置信度。
 > 目标:既能让人慢慢收集、阅读,也能让 **grill-me** 基于它准确回答,**不杜撰、不误传出处**。
 
 - 🌐 在线站点(GitHub Pages):**https://sl-yang-dl.github.io/dilts-corpus/**
@@ -14,16 +14,18 @@
 ## 文件结构
 | 路径 | 内容 | 说明 |
 |------|------|------|
-| `data/quotes.csv` | **语录单一数据源** | 你日常只改这里(追加行即可) |
-| `data/terms.csv` | **术语单一数据源** | NLP / 迪尔茨专有名词 |
-| `build_kb.py` | 生成器 | 读两个 CSV → 生成下方四个产物 |
+| `data/quotes.csv` | **语录单一数据源** | 追加行即可;含 `date`/`occasion` 元信息列(可留空) |
+| `data/terms.csv` | **术语单一数据源** | 解释 NLP / 迪尔茨专有概念 |
+| `data/books.csv` | **作品单一数据源** | 他所有作品一览 + 简介 |
+| `content/bio.md` | **迪尔茨生平** | 网站「关于」页内容(非项目 README) |
+| `build_kb.py` | 生成器 | 读三个 CSV → 生成下方产物 |
 | `语录集.md` | 按主题归类的可读语录 | 网站「语录集」页来源 |
 | `术语集.md` | 专有名词表(中英对照) | 网站「术语集」页来源 |
 | `05-knowledge.jsonl` | 结构化检索单元 | grill-me 检索 / 嵌入 |
 | `05-structured.md` | 同上的人类可读问答对 | 人工审阅 |
 | `retriever.py` | 零依赖(numpy)检索原型 | 本地验证检索效果 |
-| `site/` | VitePress 站点 | 由 `语录集.md`/`术语集.md` 渲染 |
-| `scripts/sync.mjs` | 同步脚本 | 把根目录 md 注入 `site/` |
+| `site/` | VitePress 站点 | 由 Vue 组件渲染(语录/术语/作品/关于) |
+| `scripts/sync.mjs` | 同步脚本 | 把 CSV → `site/*.ts` 与页面(关于页用 `content/bio.md`) |
 | `.github/workflows/deploy.yml` | 自动部署 | push 即上线 GitHub Pages |
 
 ## 置信度标记约定
@@ -36,18 +38,25 @@
 
 **加一条语录** → 在 `data/quotes.csv` 末尾追加一行:
 ```csv
-new-id,quote,逻辑层次,逻辑层次中越上层对越下层组织力越强。,02-models.md#1,high,逻辑层次
+new-id,quote,逻辑层次,逻辑层次中越上层对越下层组织力越强。,02-models.md#1,high,逻辑层次,,
 ```
-字段:`id, category, theme, zh, source, confidence, topic`
-- `category`:`quote` / `quote_pending` / `avoid` / `model` / `excerpt` / `book`
+字段:`id, category, theme, zh, source, confidence, topic, date, occasion`
+- `category`:`quote` / `quote_pending` / `avoid` / `model` / `excerpt`(著作已独立到 `books.csv`,此处勿用 `book`)
 - `theme`:所属主题(决定在语录集里的章节,如 `逻辑层次` `迪士尼策略`)
 - `zh`:语录中文;`source`:出处;`confidence`:上述三档之一;`topic`:短标签
+- `date` / `occasion`:**可选元信息**(如 `1990`、`某工作坊`)——需要时填,留空则不显示
 
 **加一条术语** → 在 `data/terms.csv` 末尾追加一行:
 ```csv
 new-term,Sleight of Mouth,语言魔术,一套松动与重构限制性信念的语言模式。,换框、信念改变循环,02-models.md#4,high
 ```
 字段:`id, zh, en, definition, related, source, confidence`
+
+**加一部作品** → 在 `data/books.csv` 末尾追加一行:
+```csv
+new-book,《书名》,Book Title(英文/原名),2024,著/译/合著,一句话简介,01-bibliography.md#一,high
+```
+字段:`id, title, title_en, year, role, intro, source, confidence`
 
 **生成全部产物**(语录集.md / 术语集.md / jsonl / 网站):
 ```bash
@@ -93,5 +102,8 @@ p['system'], p['context'], p['user']   # 直接作为 LLM 的 system/context/用
 - [x] 联网核验著作年份与中文译名(百度百科)
 - [x] 抓取 3 本代表作带出处摘录(豆瓣,见 `04-sourced-excerpts.md`)
 - [x] 语录 / 术语拆为 `data/*.csv` 单一数据源,`build_kb.py` 自动生成语录集.md / 术语集.md / jsonl
+- [x] 新增**作品集**页(`data/books.csv` + `BookList.vue`):所有作品一览 + 简介
+- [x] **关于**页改为迪尔茨生平详细介绍(`content/bio.md`),与项目 README 分离
+- [x] 语录支持 `date` / `occasion` 元信息列(可留空)
 - [x] VitePress 站点 + GitHub Pages 自动部署(仓库已公开)
 - [⏸️] 补充演讲 / 访谈语录:**阻塞**(无链接 + 搜索引擎反爬),待用户提供链接后续补

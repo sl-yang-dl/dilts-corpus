@@ -29,6 +29,7 @@ export default defineConfig({
       { text: '首页', link: '/' },
       { text: '语录集', link: '/quotes' },
       { text: '术语集', link: '/terms' },
+      { text: '作品集', link: '/books' },
       { text: '关于', link: '/about' }
     ],
     search: {
