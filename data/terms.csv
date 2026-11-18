@@ -1,0 +1,17 @@
+id,zh,en,definition,related,source,confidence
+term-logical-levels,逻辑层次(理解层次),Logical Levels,"由下至上六层——环境→行为→能力→信念与价值观→身份→精神/系统;越上层对越下层组织力越强,问题卡在哪层就在哪层工作。",迪士尼策略、愿景领导力,02-models.md#1,high
+term-disney,迪士尼策略,Disney Strategy,三种角色分时扮演:梦想家(发散创意)、实干家(落地计划)、批评家(查漏补缺)。,逻辑层次,02-models.md#2,high
+term-sleight,语言魔术(回应术),Sleight of Mouth,"一套松动与重构限制性信念的语言模式,含意图—重新定义、换框、归类、后果法等。",换框、信念改变循环,02-models.md#4;04-sourced-excerpts.md#1,high
+term-reframe,换框,Reframing,通过改变框架大小、情境或意义来重组对事件的看法(情境换框/意义换框/批评者换框)。,语言魔术,04-sourced-excerpts.md#1,high
+term-modeling,建模(模型仿效),Modeling,"NLP 最核心的学问之一:提炼卓越人士的思想/行为模式,转化为'思想程序'复制安装给他人。",T.O.T.E. 模型、系统派 NLP,04-sourced-excerpts.md#3,high
+term-reimprint,重塑印记,Reimprinting,"迪尔茨开发的 NLP 技法,用于重新处理早期印记以改变深层信念。",信念改变循环,02-models.md#9,high
+term-bci,冲突信念整合法,Belief Conflict Integration,"迪尔茨技法,用于整合并化解内在相互冲突的信念。",信念改变循环,02-models.md#9,high
+term-spelling,拼写策略,Spelling Strategy,"对优秀拼写者的策略建模(视觉/听觉/触觉组合),用于改善学习困难。",建模,02-models.md#6;02-models.md#9,high
+term-allergy,脱敏技术(消除过敏),Allergy Relief,"迪尔茨技法,用 NLP 技术缓解/消除过敏性反应的心理成分。",重塑印记,02-models.md#9,high
+term-bcc,信念改变循环,Belief Change Cycle,迪尔茨提出的改变信念的系统步骤。,重塑印记、冲突信念整合法,02-models.md#9,high
+term-perceptual,感知位置,Perceptual Positions,"一/二/三位置:自己、对方、观察者(可扩展时间/系统位置),用于关系与冲突整合。",英雄之旅,02-models.md#7,high
+term-hero,英雄之旅,Hero's Journey,基于 Campbell 神话结构发展为个人蜕变/教练框架;强调灵性召唤与自我发现。,生生不息的自我,02-models.md#3;04-sourced-excerpts.md#2,high
+term-generative,生生不息的自我,Generative Self,"英雄之旅框架中的核心概念:整合身体/认知/场域三个心智,活出原始、自我、生生不息三层意识。",英雄之旅、三个心智,02-models.md#3,high
+term-systemic,系统派 NLP,Systemic NLP,"对迪尔茨 NLP 发展方向的称呼,强调系统性与整体性。",建模、逻辑层次,04-sourced-excerpts.md#3,high
+term-map,地图不是疆域,The Map is Not the Territory,"NLP 共有前提(源自 Korzybski 1933),意为地图不等于真实;非迪尔茨原创,但其著作列为 NLP 原则之一。",(NLP 原则),02-models.md#10,high
+term-tote,T.O.T.E. 模型,T.O.T.E. Model,"建模的基本模型(Test-Operate-Test-Exit),描述达成目标与模仿卓越技能的基本循环。",建模,04-sourced-excerpts.md#3,high
