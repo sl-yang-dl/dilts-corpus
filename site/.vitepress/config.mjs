@@ -32,7 +32,9 @@ export default defineConfig({
   description: '迪尔茨在 NLP 与教练体系中的观点、金句与术语,按主题归类,标注出处与置信度。',
   lang: 'zh-CN',
   lastUpdated: true,
-  cleanUrls: true,
+  // 关掉 cleanUrls:GitHub Pages 静态托管不支持无扩展名路径,
+  // 必须用 /quotes.html 这种带扩展名的链接(否则导航 404)。
+  cleanUrls: false,
   themeConfig: {
     nav: [
       { text: '首页', link: '/' },
