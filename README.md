@@ -1,61 +1,85 @@
-# 罗伯特·迪尔茨 (Robert Dilts) 语料库
+# 罗伯特·迪尔茨语录集(语录 + 术语)
 
-> 供 **grill-me** 检索与引用的素材底座。
-> 目标:让 grill-me 能基于迪尔茨的作品与言论准确回答,**不杜撰、不误传出处**。
+> 收录罗伯特·迪尔茨(Robert Dilts)在 NLP 与教练体系中的**观点、金句与术语**,按主题归类,每条标注出处与置信度。
+> 目标:既能让人慢慢收集、阅读,也能让 **grill-me** 基于它准确回答,**不杜撰、不误传出处**。
+
+- 🌐 在线站点(GitHub Pages):**https://sl-yang-dl.github.io/dilts-corpus/**
+- 📦 仓库已**公开**;push 到 `main` 即自动构建并部署网站。
 
 ## 状态
-- 🟢 可收集内容已全部结构化(书目 / 模型 / 语录 / 带出处摘录 / 检索单元)
+- 🟢 语录 / 术语已结构化,单一数据源驱动网站 + 检索单元
 - ⏸️ 演讲·访谈逐字稿:因无可用链接 + 搜索引擎反爬,**暂缺**,待用户提供链接后续补
 - 本机可访问国内站点(Baidu/Baike/Douban),境外站点(Google/Wikipedia/YouTube)不通
 
-## 目录
-| 文件 | 内容 | 用途 |
+## 文件结构
+| 路径 | 内容 | 说明 |
 |------|------|------|
-| `01-bibliography.md` | 著作清单(原著 + 中文译本) | 回答"他写过什么" |
-| `02-models.md` | 核心模型与概念(逻辑层次、迪士尼策略等) | 回答"他的方法论" |
-| `03-quotes.md` | 代表性语录(带置信度标记) | 回答"他说过什么" |
-| `04-sourced-excerpts.md` | 3 本代表作的带出处摘录(简介/作者/目录)+ 误匹配警示 | 提供可溯源原话 |
-| `05-knowledge.jsonl` | 结构化检索单元(JSONL,向量化友好) | grill-me 检索/嵌入 |
-| `05-structured.md` | 同上的人类可读问答对(按类别分组) | 人工审阅 |
-| `build_kb.py` | 从 01~04 生成 05 的脚本(单源,两格式同步) | 重建语料时运行 |
+| `data/quotes.csv` | **语录单一数据源** | 你日常只改这里(追加行即可) |
+| `data/terms.csv` | **术语单一数据源** | NLP / 迪尔茨专有名词 |
+| `build_kb.py` | 生成器 | 读两个 CSV → 生成下方四个产物 |
+| `语录集.md` | 按主题归类的可读语录 | 网站「语录集」页来源 |
+| `术语集.md` | 专有名词表(中英对照) | 网站「术语集」页来源 |
+| `05-knowledge.jsonl` | 结构化检索单元 | grill-me 检索 / 嵌入 |
+| `05-structured.md` | 同上的人类可读问答对 | 人工审阅 |
+| `retriever.py` | 零依赖(numpy)检索原型 | 本地验证检索效果 |
+| `site/` | VitePress 站点 | 由 `语录集.md`/`术语集.md` 渲染 |
+| `scripts/sync.mjs` | 同步脚本 | 把根目录 md 注入 `site/` |
+| `.github/workflows/deploy.yml` | 自动部署 | push 即上线 GitHub Pages |
 
 ## 置信度标记约定
-- ✅ **高置信**:可安全归于迪尔茨的观点 / 模型表述
-- ⚠️ **待核验**:广泛流传但原文或出处需核对
-- ❓ **疑似误传**:常被归于迪尔茨,实则出自他人(用于"避坑",勿引用)
+- ✅ **高置信(high)**:可安全归于迪尔茨的观点 / 模型表述
+- ⚠️ **待核验(pending)**:广泛流传但原文或出处需核对
+- ❓ **疑似误传(avoid)**:常被归于迪尔茨,实则出自他人(用于"避坑",勿引用)
+
+## 如何添加一条语录 / 术语(日常收集)
+只动两个 CSV,其余自动生成。
+
+**加一条语录** → 在 `data/quotes.csv` 末尾追加一行:
+```csv
+new-id,quote,逻辑层次,逻辑层次中越上层对越下层组织力越强。,02-models.md#1,high,逻辑层次
+```
+字段:`id, category, theme, zh, source, confidence, topic`
+- `category`:`quote` / `quote_pending` / `avoid` / `model` / `excerpt` / `book`
+- `theme`:所属主题(决定在语录集里的章节,如 `逻辑层次` `迪士尼策略`)
+- `zh`:语录中文;`source`:出处;`confidence`:上述三档之一;`topic`:短标签
+
+**加一条术语** → 在 `data/terms.csv` 末尾追加一行:
+```csv
+new-term,Sleight of Mouth,语言魔术,一套松动与重构限制性信念的语言模式。,换框、信念改变循环,02-models.md#4,high
+```
+字段:`id, zh, en, definition, related, source, confidence`
+
+**生成全部产物**(语录集.md / 术语集.md / jsonl / 网站):
+```bash
+python3 build_kb.py
+```
+**发布**:`git add -A && git commit && git push` → 网站自动部署;jsonl 同步更新供 grill-me 使用。
+
+## 本地预览网站
+```bash
+cd site
+npm install        # 首次
+npm run dev         # 本地预览 http://localhost:5173
+npm run build       # 产出 site/.vitepress/dist
+```
+`npm run dev/build` 会先跑 `scripts/sync.mjs`,把最新的 `语录集.md`/`术语集.md` 注入站点。
+
+## 网站部署(GitHub Pages)
+- 架构参照 `book-to-skill`:VitePress + `scripts/sync.mjs` 自动同步 + `.github/workflows/deploy.yml`,push 到 `main` 即 `npm run build` → 部署 Pages。
+- 基路径由 CI 注入 `VP_BASE=/dilts-corpus/`(仓库改名时需同步改)。
+- 站内支持主题导航、全文搜索(中文友好)、置信度标记。
 
 ## 给 grill-me 的接入约定
 1. 引用语录时优先使用 ✅ 条目;⚠️ 条目需注明"流传版本,出处待核"。
-2. 涉及书名/年份,以 `01-bibliography.md` 为准,并提示"部分译名待核"。
-3. 遇到 ❓ 类名言,主动纠正归因,不要顺着误传回答。
-4. 无法确认的内容,明确说"资料中未收录 / 待核验",而非编造。
-
-## 待办
-- [x] 联网核验著作年份与中文译名(百度百科,2026-11-16 完成)
-- [x] 抓取到处摘录:3 本代表作(豆瓣,2026-11-16,见 `04-sourced-excerpts.md`)
-- [x] 结构化:29 条检索单元(`05-knowledge.jsonl` + `05-structured.md`,由 `build_kb.py` 生成)
-- [⏸️] 补充演讲 / 访谈语录:**阻塞**(无链接 + 搜索引擎反爬),待用户提供链接后续补
-
-## grill-me 接入
-1. 取 `05-knowledge.jsonl`(29 条检索单元,每行一条 JSON)。
-2. 对每条 `answer`(或 `question`+`answer`)做文本嵌入,存入向量库。
-3. 用户提问时:向量检索命中 → 取 `answer` 作为上下文,并遵守 `confidence` 引用策略:
-   - `high`:可直接引用
-   - `pending`:引用时注明"出处待核"
-   - `avoid`:这是常见误传,主动纠正归因,**不要**当成迪尔茨原话
-4. 每条带 `source` 字段,可回溯到 `01~04` 原始文档追责/纠错。
+2. 遇到 ❓ 类名言,主动纠正归因,不要顺着误传回答。
+3. 无法确认的内容,明确说"资料中未收录 / 待核验",而非编造。
 
 ### 最小原型 `retriever.py`(已包含,零依赖仅 numpy)
 本地即可验证检索效果,无需联网/装包:
 ```bash
-# 内置 3 条 demo
-python3 retriever.py
-
-# 单条查询(输出可直接喂 LLM 的上下文)
-python3 retriever.py "迪尔茨的逻辑层次是什么"
-
-# 以 JSON 返回命中记录(便于接 grill-me)
-python3 retriever.py --json "地图不是疆域 是谁说的"
+python3 retriever.py                        # 内置 3 条 demo
+python3 retriever.py "迪尔茨的逻辑层次是什么"   # 单条查询
+python3 retriever.py --json "地图不是疆域 是谁说的"  # JSON 返回
 ```
 在 Python 中调用:
 ```python
@@ -63,15 +87,11 @@ from retriever import build_prompt
 p = build_prompt("迪尔茨的逻辑层次是什么", k=3)
 p['system'], p['context'], p['user']   # 直接作为 LLM 的 system/context/用户问题
 ```
-> 升级真实句向量:把 `retriever.py` 里的 `embed()` 换成 sentence-transformers / OpenAI 等,
-> 其余检索与上下文组装逻辑无需改动。
+> 升级真实句向量:把 `retriever.py` 里的 `embed()` 换成 sentence-transformers / OpenAI 等,其余逻辑无需改动。
 
-## 维护与重建
-- 语料源文件为 `01~04`(人类维护);结构化产物 `05-*` 由脚本生成,**勿手改**。
-- 修改/补充语料后,在仓库根目录运行:
-  ```bash
-  python3 build_kb.py
-  ```
-  会同步刷新 `05-knowledge.jsonl` 与 `05-structured.md`。
-- 新增一条记录:在 `build_kb.py` 的 `RECORDS` 列表追加一个 dict(id/category/topic/question/answer/source/confidence)即可。
-- 扩展其他人物 / 主题:复制本仓库结构,或在本仓库内新增同名子目录与生成脚本。
+## 待办
+- [x] 联网核验著作年份与中文译名(百度百科)
+- [x] 抓取 3 本代表作带出处摘录(豆瓣,见 `04-sourced-excerpts.md`)
+- [x] 语录 / 术语拆为 `data/*.csv` 单一数据源,`build_kb.py` 自动生成语录集.md / 术语集.md / jsonl
+- [x] VitePress 站点 + GitHub Pages 自动部署(仓库已公开)
+- [⏸️] 补充演讲 / 访谈语录:**阻塞**(无链接 + 搜索引擎反爬),待用户提供链接后续补
