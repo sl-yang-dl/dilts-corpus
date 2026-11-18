@@ -132,83 +132,83 @@
 ## 六、著作与内容
 
 - [著作] Neuro-Linguistic Programming: Volume I 讲什么?
-  - 答:01-bibliography.md#一
-  - 出处:high  置信度:None
+  - 答:NLP 早期标准参考文献之一,系统整理 NLP 的基本前提、技术与模型。
+  - 出处:01-bibliography.md#一  置信度:high
 - [著作] Changing Belief Systems with NLP 讲什么?
-  - 答:01-bibliography.md#一
-  - 出处:high  置信度:None
+  - 答:探讨如何识别与改变限制性信念系统,开创信念改变方向。
+  - 出处:01-bibliography.md#一  置信度:high
 - [著作] Beliefs: Pathways to Health and Well-Being 讲什么?
-  - 答:01-bibliography.md#一
-  - 出处:high  置信度:None
+  - 答:从健康与身心疗愈角度谈信念的改变。
+  - 出处:01-bibliography.md#一  置信度:high
 - [著作] Tools for Dreamers 讲什么?
-  - 答:01-bibliography.md#一
-  - 出处:high  置信度:None
+  - 答:关于创意与梦想实现的策略工具。
+  - 出处:01-bibliography.md#一  置信度:high
 - [著作] Skills for the Future 讲什么?
-  - 答:01-bibliography.md#一
-  - 出处:high  置信度:None
+  - 答:面向未来的学习与策略技能。
+  - 出处:01-bibliography.md#一  置信度:high
 - [著作] Strategies of Genius Vol.1–3 讲什么?
-  - 答:01-bibliography.md#一
-  - 出处:high  置信度:None
+  - 答:对爱因斯坦、迪士尼、达芬奇等天才的策略建模。
+  - 出处:01-bibliography.md#一  置信度:high
 - [著作] Dynamic Learning 讲什么?
-  - 答:01-bibliography.md#一
-  - 出处:high  置信度:None
+  - 答:学习与记忆策略。
+  - 出处:01-bibliography.md#一  置信度:high
 - [著作] Visionary Leadership Skills 讲什么?
-  - 答:01-bibliography.md#一
-  - 出处:high  置信度:None
+  - 答:中译《归属感》;将逻辑层次用于愿景与领导力。
+  - 出处:01-bibliography.md#一  置信度:high
 - [著作] Modeling with NLP 讲什么?
-  - 答:01-bibliography.md#一
-  - 出处:high  置信度:None
+  - 答:中译《NLP模仿卓越的艺术》;系统讲解模型仿效。
+  - 出处:01-bibliography.md#一  置信度:high
 - [著作] Sleight of Mouth 讲什么?
-  - 答:01-bibliography.md#一
-  - 出处:high  置信度:None
+  - 答:中译《语言的魔力》;信念改变的对话语言模式。
+  - 出处:01-bibliography.md#一  置信度:high
 - [著作] The Encyclopedia of Systemic NLP 讲什么?
-  - 答:01-bibliography.md#一
-  - 出处:high  置信度:None
+  - 答:系统派 NLP 百科。
+  - 出处:01-bibliography.md#一  置信度:high
 - [著作] Alpha Leadership 讲什么?
-  - 答:01-bibliography.md#一
-  - 出处:high  置信度:None
+  - 答:领导力著作(原误作 Alpha to Omega,已修正)。
+  - 出处:01-bibliography.md#一  置信度:high
 - [著作] From Coach to Awakener 讲什么?
-  - 答:01-bibliography.md#一
-  - 出处:high  置信度:None
-- [著作] The Hero's Journey 讲什么?
-  - 答:01-bibliography.md#一
-  - 出处:high  置信度:None
+  - 答:中译《从教练到唤醒者》;教练的唤醒者阶段。
+  - 出处:01-bibliography.md#一  置信度:high
+- [著作] The Hero’s Journey 讲什么?
+  - 答:中译《英雄之旅》;自我发现的旅程。
+  - 出处:01-bibliography.md#一  置信度:high
 - [著作] NLP II: The Next Generation 讲什么?
-  - 答:01-bibliography.md#一
-  - 出处:high  置信度:None
+  - 答:NLP 新一代技术与系统派发展。
+  - 出处:01-bibliography.md#一  置信度:high
 - [著作] Next Generation Entrepreneurs 讲什么?
-  - 答:01-bibliography.md#一
-  - 出处:high  置信度:None
+  - 答:卓越元素解码系列第一部。
+  - 出处:01-bibliography.md#一  置信度:high
 - [著作] Generative Coaching 讲什么?
-  - 答:01-bibliography.md#一
-  - 出处:high  置信度:None
+  - 答:生生不息教练(系列)。
+  - 出处:01-bibliography.md#一  置信度:high
 - [著作] 《语言的魔力》 讲什么?
-  - 答:01-bibliography.md#二
-  - 出处:high  置信度:None
+  - 答:Sleight of Mouth 中译;世界图书出版公司等;回应术/语言魔术。
+  - 出处:01-bibliography.md#二  置信度:high
 - [著作] 《从教练到唤醒者》 讲什么?
-  - 答:01-bibliography.md#二
-  - 出处:high  置信度:None
+  - 答:From Coach to Awakener 中译;河南人民出版社;NLP 人生成功宝典。
+  - 出处:01-bibliography.md#二  置信度:high
 - [著作] 《英雄之旅》 讲什么?
-  - 答:01-bibliography.md#二
-  - 出处:high  置信度:None
+  - 答:The Hero’s Journey 中译;与吉利根合著;自我发现的旅程。
+  - 出处:01-bibliography.md#二  置信度:high
 - [著作] 《归属感》 讲什么?
-  - 答:01-bibliography.md#二
-  - 出处:high  置信度:None
+  - 答:Visionary Leadership Skills 中译;北方妇女儿童出版社;愿景领导力。
+  - 出处:01-bibliography.md#二  置信度:high
 - [著作] 《卓越元素》 讲什么?
-  - 答:01-bibliography.md#二
-  - 出处:high  置信度:None
+  - 答:北京联合出版公司。
+  - 出处:01-bibliography.md#二  置信度:high
 - [著作] 《NLP模仿卓越的艺术》 讲什么?
-  - 答:01-bibliography.md#二
-  - 出处:high  置信度:None
+  - 答:Modeling with NLP 中译;河南人民出版社。
+  - 出处:01-bibliography.md#二  置信度:high
 - [著作] 《集体智慧》 讲什么?
-  - 答:01-bibliography.md#二
-  - 出处:high  置信度:None
+  - 答:广东旅游出版社;生生不息的合作。
+  - 出处:01-bibliography.md#二  置信度:high
 - [著作] 《信念的魔力》 讲什么?
-  - 答:01-bibliography.md#二
-  - 出处:high  置信度:None
+  - 答:海南出版社;重塑内在,重新掌控生命。
+  - 出处:01-bibliography.md#二  置信度:high
 - [著作] 《天才的策略》 讲什么?
-  - 答:01-bibliography.md#二
-  - 出处:high  置信度:None
+  - 答:Strategies of Genius 中译(词条提及)。
+  - 出处:01-bibliography.md#二  置信度:high
 
 ## 七、常见误传(勿归于迪尔茨)
 
