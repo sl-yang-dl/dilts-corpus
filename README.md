@@ -17,7 +17,7 @@
 | `data/quotes.csv` | **语录单一数据源** | 追加行即可;含 `date`/`occasion` 元信息列(可留空) |
 | `data/terms.csv` | **术语单一数据源** | 解释 NLP / 迪尔茨专有概念 |
 | `data/books.csv` | **作品单一数据源** | 他所有作品一览 + 简介 |
-| `content/bio.md` | **迪尔茨生平** | 网站「关于」页内容(非项目 README) |
+| `site/bio.ts` | **迪尔茨生平(结构化)** | 网站「关于」页时间线数据,驱动 `BioPage.vue` |
 | `build_kb.py` | 生成器 | 读三个 CSV → 生成下方产物 |
 | `语录集.md` | 按主题归类的可读语录 | 网站「语录集」页来源 |
 | `术语集.md` | 专有名词表(中英对照) | 网站「术语集」页来源 |
@@ -25,7 +25,7 @@
 | `05-structured.md` | 同上的人类可读问答对 | 人工审阅 |
 | `retriever.py` | 零依赖(numpy)检索原型 | 本地验证检索效果 |
 | `site/` | VitePress 站点 | 由 Vue 组件渲染(语录/术语/作品/关于) |
-| `scripts/sync.mjs` | 同步脚本 | 把 CSV → `site/*.ts` 与页面(关于页用 `content/bio.md`) |
+| `scripts/sync.mjs` | 同步脚本 | 把 CSV → `site/*.ts` 与页面(关于页由 `site/bio.ts` 驱动) |
 | `.github/workflows/deploy.yml` | 自动部署 | push 即上线 GitHub Pages |
 
 ## 置信度标记约定
@@ -103,7 +103,7 @@ p['system'], p['context'], p['user']   # 直接作为 LLM 的 system/context/用
 - [x] 抓取 3 本代表作带出处摘录(豆瓣,见 `04-sourced-excerpts.md`)
 - [x] 语录 / 术语拆为 `data/*.csv` 单一数据源,`build_kb.py` 自动生成语录集.md / 术语集.md / jsonl
 - [x] 新增**作品集**页(`data/books.csv` + `BookList.vue`):所有作品一览 + 简介
-- [x] **关于**页改为迪尔茨生平详细介绍(`content/bio.md`),与项目 README 分离
+- [x] **关于**页改为迪尔茨生平时间线(`site/bio.ts` + `BioPage.vue`),与项目 README 分离
 - [x] 语录支持 `date` / `occasion` 元信息列(可留空)
 - [x] VitePress 站点 + GitHub Pages 自动部署(仓库已公开)
 - [⏸️] 补充演讲 / 访谈语录:**阻塞**(无链接 + 搜索引擎反爬),待用户提供链接后续补

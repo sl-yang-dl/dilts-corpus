@@ -67,8 +67,7 @@ writeFile('quotes.md', `---\nlayout: page\n---\n\n<QuoteList />\n`)
 writeFile('terms.md', `---\nlayout: page\n---\n\n<TermList />\n`)
 writeFile('books.md', `---\nlayout: page\n---\n\n<BookList />\n`)
 
-// about 页内容 = 迪尔茨生平(content/bio.md),而非项目 README
-const bio = fs.readFileSync(path.join(ROOT, 'content', 'bio.md'), 'utf-8')
-writeFile('about.md', `---\nlayout: page\ntitle: 关于罗伯特·迪尔茨\n---\n\n${bio}\n`)
+// about 页 = 生平时间线,由 site/bio.ts 驱动 <BioPage /> 渲染
+writeFile('about.md', `---\nlayout: page\ntitle: 关于罗伯特·迪尔茨\n---\n\n<BioPage />\n`)
 
 console.log('[sync] index/quotes/terms/books/about 页已生成')

@@ -2,37 +2,22 @@
 import { ref, computed } from 'vue'
 import { quotes } from '../../quotes'
 
-const THEME_ORDER = [
-  '逻辑层次', '愿景与领导力', '迪士尼策略', '信念',
-  '语言魔术 / 回应术', '英雄之旅', '模型仿效 / 系统派 NLP',
-  '学习策略', '感知位置', '著作', '常见误传(勿归于迪尔茨)', '待核验'
-]
-
 const search = ref('')
 const active = ref(new Set())
 const showPending = ref(true)
 const showAvoid = ref(true)
 const copiedId = ref('')
 
-const filtered = computed(() =>
-  quotes.filter((q) => {
-    if (q.confidence === 'pending' && !showPending.value) return false
-    if (q.confidence === 'avoid' && !showAvoid.value) return false
+const themes = computed(() => [...new Set(quotes.map((q) => q.theme))])
+const filtered = computed(() => {
+  const s = search.value.trim().toLowerCase()
+  return quotes.filter((q) => {
+    if (!showPending.value && q.confidence === 'pending') return false
+    if (!showAvoid.value && q.confidence === 'avoid') return false
     if (active.value.size && !active.value.has(q.theme)) return false
-    const s = search.value.trim().toLowerCase()
-    if (s) {
-      const hay = (q.zh + q.source + q.topic + q.theme).toLowerCase()
-      if (!hay.includes(s)) return false
-    }
-    return true
+    if (!s) return true
+    return (q.zh + q.source + q.theme).toLowerCase().includes(s)
   })
-)
-
-const themes = computed(() => {
-  const present = [...new Set(quotes.map((q) => q.theme))]
-  const known = THEME_ORDER.filter((t) => present.includes(t))
-  const extra = present.filter((t) => !THEME_ORDER.includes(t)).sort()
-  return known.concat(extra)
 })
 
 const grouped = computed(() =>
@@ -41,7 +26,11 @@ const grouped = computed(() =>
     .filter((g) => g.items.length)
 )
 
-const badgeMap = { high: { t: '✅ 可引用', c: 'b-high' }, pending: { t: '⚠️ 待核验', c: 'b-pending' }, avoid: { t: '❓ 误传勿引', c: 'b-avoid' } }
+const badgeMap = {
+  high: { t: '✅ 可引用', c: 'b-high' },
+  pending: { t: '⚠️ 待核验', c: 'b-pending' },
+  avoid: { t: '❓ 误传勿引', c: 'b-avoid' }
+}
 
 function toggleTheme(t) {
   const n = new Set(active.value)
@@ -72,18 +61,23 @@ async function copy(q) {
 
 <template>
   <div>
-    <div class="q-controls">
+    <div class="page-head">
+      <h1>语录集</h1>
+      <p>罗伯特·迪尔茨的观点与金句,按主题归类;每条标注出处与置信度。</p>
+    </div>
+
+    <div class="q-bar">
       <input class="q-search" v-model="search" placeholder="搜索语录 / 出处 / 主题…" />
-      <button class="btn" @click="randomOne">随机一条 🎲</button>
+      <button class="btn primary" @click="randomOne">🎲 随机一条</button>
+    </div>
+
+    <div class="q-controls" style="margin-top:.8rem">
+      <div class="chips">
+        <span v-for="t in themes" :key="t" class="chip" :class="{ active: active.has(t) }" @click="toggleTheme(t)">{{ t }}</span>
+      </div>
       <div class="toggles">
         <label><input type="checkbox" v-model="showPending" /> 待核验</label>
         <label><input type="checkbox" v-model="showAvoid" /> 误传</label>
-      </div>
-    </div>
-
-    <div class="q-controls" style="margin-top:.6rem">
-      <div class="chips">
-        <span v-for="t in themes" :key="t" class="chip" :class="{ active: active.has(t) }" @click="toggleTheme(t)">{{ t }}</span>
       </div>
     </div>
 

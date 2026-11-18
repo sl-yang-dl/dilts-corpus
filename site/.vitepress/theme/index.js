@@ -3,6 +3,7 @@ import HomeQuote from './HomeQuote.vue'
 import QuoteList from './QuoteList.vue'
 import TermList from './TermList.vue'
 import BookList from './BookList.vue'
+import BioPage from './BioPage.vue'
 import './style.css'
 
 export default {
@@ -12,5 +13,6 @@ export default {
     app.component('QuoteList', QuoteList)
     app.component('TermList', TermList)
     app.component('BookList', BookList)
+    app.component('BioPage', BioPage)
   }
 }
