@@ -13,18 +13,7 @@ const head = [
   ['link', { rel: 'icon', type: 'image/svg+xml', href: `${base}favicon.svg` }],
 ]
 
-const sidebar = [
-  {
-    text: '罗伯特·迪尔茨语录集',
-    collapsed: false,
-    items: [
-      { text: '语录集', link: '/quotes' },
-      { text: '术语集', link: '/terms' },
-      { text: '关于本项目', link: '/about' }
-    ]
-  }
-]
-
+// 语录/术语页用 layout:page 全宽承载组件,无需侧边栏;顶部导航即可。
 export default defineConfig({
   base,
   head,
@@ -42,7 +31,6 @@ export default defineConfig({
       { text: '术语集', link: '/terms' },
       { text: '关于', link: '/about' }
     ],
-    sidebar,
     search: {
       provider: 'local',
       options: {

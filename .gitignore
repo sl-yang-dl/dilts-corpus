@@ -4,6 +4,9 @@ site/.vitepress/dist/
 site/.vitepress/cache/
 
 # 由 scripts/sync.mjs 从仓库根自动同步生成,勿手改
+site/quotes.ts
+site/terms.ts
+site/index.md
 site/quotes.md
 site/terms.md
 site/about.md
