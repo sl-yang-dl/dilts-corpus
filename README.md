@@ -45,6 +45,27 @@
    - `avoid`:这是常见误传,主动纠正归因,**不要**当成迪尔茨原话
 4. 每条带 `source` 字段,可回溯到 `01~04` 原始文档追责/纠错。
 
+### 最小原型 `retriever.py`(已包含,零依赖仅 numpy)
+本地即可验证检索效果,无需联网/装包:
+```bash
+# 内置 3 条 demo
+python3 retriever.py
+
+# 单条查询(输出可直接喂 LLM 的上下文)
+python3 retriever.py "迪尔茨的逻辑层次是什么"
+
+# 以 JSON 返回命中记录(便于接 grill-me)
+python3 retriever.py --json "地图不是疆域 是谁说的"
+```
+在 Python 中调用:
+```python
+from retriever import build_prompt
+p = build_prompt("迪尔茨的逻辑层次是什么", k=3)
+p['system'], p['context'], p['user']   # 直接作为 LLM 的 system/context/用户问题
+```
+> 升级真实句向量:把 `retriever.py` 里的 `embed()` 换成 sentence-transformers / OpenAI 等,
+> 其余检索与上下文组装逻辑无需改动。
+
 ## 维护与重建
 - 语料源文件为 `01~04`(人类维护);结构化产物 `05-*` 由脚本生成,**勿手改**。
 - 修改/补充语料后,在仓库根目录运行:
