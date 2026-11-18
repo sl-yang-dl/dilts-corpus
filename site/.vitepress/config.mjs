@@ -1,0 +1,61 @@
+import { defineConfig } from 'vitepress'
+import fs from 'node:fs'
+import path from 'node:path'
+import { fileURLToPath } from 'node:url'
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
+
+// 本地开发 base 为 '/';GitHub Pages 项目页需设为 '/<仓库名>/'
+// 由 CI 通过环境变量 VP_BASE 注入(见 .github/workflows/deploy.yml)。
+const base = process.env.VP_BASE || '/'
+
+const head = [
+  ['link', { rel: 'icon', type: 'image/svg+xml', href: `${base}favicon.svg` }],
+]
+
+const sidebar = [
+  {
+    text: '罗伯特·迪尔茨语录集',
+    collapsed: false,
+    items: [
+      { text: '语录集', link: '/quotes' },
+      { text: '术语集', link: '/terms' },
+      { text: '关于本项目', link: '/about' }
+    ]
+  }
+]
+
+export default defineConfig({
+  base,
+  head,
+  title: '罗伯特·迪尔茨语录集',
+  description: '迪尔茨在 NLP 与教练体系中的观点、金句与术语,按主题归类,标注出处与置信度。',
+  lang: 'zh-CN',
+  lastUpdated: true,
+  cleanUrls: true,
+  themeConfig: {
+    nav: [
+      { text: '首页', link: '/' },
+      { text: '语录集', link: '/quotes' },
+      { text: '术语集', link: '/terms' },
+      { text: '关于', link: '/about' }
+    ],
+    sidebar,
+    search: {
+      provider: 'local',
+      options: {
+        detail: true,
+        miniSearch: {
+          // 中文按字/词更友好:前缀 + 轻度模糊
+          searchOptions: { prefix: true, fuzzy: 0.2 }
+        }
+      }
+    },
+    outline: { level: [2, 3] },
+    docFooter: { prev: false, next: false },
+    returnToTopLabel: '回到顶部',
+    sidebarMenuLabel: '菜单',
+    darkModeSwitchLabel: '主题',
+    lastUpdatedText: '最后更新'
+  }
+})
