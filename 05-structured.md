@@ -125,6 +125,9 @@
 - [术语] T.O.T.E. 模型(T.O.T.E. Model) 是什么?
   - 答:建模的基本模型(Test-Operate-Test-Exit),描述达成目标与模仿卓越技能的基本循环。
   - 出处:04-sourced-excerpts.md#3  置信度:high
+- [术语] NLP(神经语言程序学)(Neuro-Linguistic Programming) 是什么?
+  - 答:由 Richard Bandler 与 John Grinder 于 1970 年代创立的沟通、学习与改变的模型,研究「身心语言」如何影响人的经验与行为。迪尔茨是早期核心开发者之一,并发展出「系统派 NLP」。
+  - 出处:百度百科/公开资料  置信度:high
 
 ## 六、著作与内容
 
