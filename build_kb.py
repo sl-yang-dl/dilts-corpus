@@ -85,17 +85,18 @@ def build_quotes_md(recs):
         lines += ['## ' + theme, '']
         for r in items:
             badge = {'high': '✅', 'pending': '⚠️', 'avoid': '❓'}.get(r['confidence'], '')
-            meta = ''
-            if r['date'] or r['occasion'] or r.get('added'):
-                parts = []
-                if r['date']:
-                    parts.append(f"📅 {r['date']}")
-                if r['occasion']:
-                    parts.append(f"场合:{r['occasion']}")
-                if r.get('added'):
-                    parts.append(f"收录:{r['added']}")
-                meta = '  _(' + ' · '.join(parts) + ')_'
-            lines.append(f"- {badge} {r['question']}  —— 出处:{r['source']}{meta}")
+            meta_parts = []
+            if r['date']:
+                meta_parts.append(f"📅 {r['date']}")
+            if r['occasion']:
+                meta_parts.append(f"场合:{r['occasion']}")
+            if r.get('added'):
+                meta_parts.append(f"📥 收录:{r['added']}")
+            meta = (' · ' + ' · '.join(meta_parts)) if meta_parts else ''
+            lines.append(f"> **{badge}** {r['question']}")
+            lines.append(">")
+            lines.append(f"> 📚 出处:{r['source']}{meta}")
+            lines.append('')
         lines.append('')
     return '\n'.join(lines)
 

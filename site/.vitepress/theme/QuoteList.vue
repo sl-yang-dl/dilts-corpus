@@ -88,19 +88,21 @@ async function copy(q) {
       <div class="q-grid">
         <div v-for="q in g.items" :key="q.id" :id="'q-' + q.id" class="q-card">
           <span class="qm">“</span>
-          <div class="body">{{ q.zh }}</div>
-          <div class="meta" v-if="q.date || q.occasion || q.added">
+          <p class="body">{{ q.zh }}</p>
+          <div class="card-meta" v-if="q.date || q.occasion || q.added">
             <span v-if="q.date">📅 {{ q.date }}</span>
-            <span v-if="q.occasion"> · 场合:{{ q.occasion }}</span>
-            <span v-if="q.added"> · 📥 收录 {{ q.added }}</span>
+            <span v-if="q.occasion">· 场合:{{ q.occasion }}</span>
+            <span v-if="q.added">· 📥 收录 {{ q.added }}</span>
           </div>
-          <div class="foot">
-            <span class="src">{{ q.source }}</span>
+          <div class="card-foot">
+            <div class="src">
+              <span class="theme-tag">{{ q.theme }}</span>
+              <span class="src-text">{{ q.source }}</span>
+            </div>
             <span class="badge" :class="badgeMap[q.confidence].c">{{ badgeMap[q.confidence].t }}</span>
           </div>
-          <div class="foot" style="margin-top:.5rem">
-            <span></span>
-            <button class="copy" @click="copy(q)">{{ copiedId === q.id ? '已复制 ✓' : '复制' }}</button>
+          <div class="card-actions">
+            <button class="copy" @click="copy(q)">{{ copiedId === q.id ? '已复制 ✓' : '复制金句' }}</button>
           </div>
         </div>
       </div>
