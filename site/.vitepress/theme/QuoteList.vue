@@ -89,10 +89,10 @@ async function copy(q) {
         <div v-for="q in g.items" :key="q.id" :id="'q-' + q.id" class="q-card">
           <span class="qm">“</span>
           <div class="body">{{ q.zh }}</div>
-          <div class="meta" v-if="q.date || q.occasion">
+          <div class="meta" v-if="q.date || q.occasion || q.added">
             <span v-if="q.date">📅 {{ q.date }}</span>
-            <span v-if="q.date && q.occasion"> · </span>
-            <span v-if="q.occasion">场合:{{ q.occasion }}</span>
+            <span v-if="q.occasion"> · 场合:{{ q.occasion }}</span>
+            <span v-if="q.added"> · 📥 收录 {{ q.added }}</span>
           </div>
           <div class="foot">
             <span class="src">{{ q.source }}</span>

@@ -43,6 +43,7 @@ def to_records():
             'confidence': q['confidence'],
             'date': q.get('date', ''),
             'occasion': q.get('occasion', ''),
+            'added': q.get('added', ''),
         })
     for t in load('terms.csv'):
         recs.append({
@@ -85,12 +86,14 @@ def build_quotes_md(recs):
         for r in items:
             badge = {'high': '✅', 'pending': '⚠️', 'avoid': '❓'}.get(r['confidence'], '')
             meta = ''
-            if r['date'] or r['occasion']:
+            if r['date'] or r['occasion'] or r.get('added'):
                 parts = []
                 if r['date']:
                     parts.append(f"📅 {r['date']}")
                 if r['occasion']:
                     parts.append(f"场合:{r['occasion']}")
+                if r.get('added'):
+                    parts.append(f"收录:{r['added']}")
                 meta = '  _(' + ' · '.join(parts) + ')_'
             lines.append(f"- {badge} {r['question']}  —— 出处:{r['source']}{meta}")
         lines.append('')
@@ -130,6 +133,7 @@ def build_jsonl(recs):
             'confidence': r['confidence'],
             'date': r.get('date', ''),
             'occasion': r.get('occasion', ''),
+            'added': r.get('added', ''),
         }, ensure_ascii=False))
     return '\n'.join(out)
 
@@ -160,8 +164,8 @@ def build_structured_md(recs):
             lines.append(f"- {head}")
             lines.append(f"  - 答:{r['answer']}")
             lines.append(f"  - 出处:{r['source']}  置信度:{r['confidence']}")
-            if r.get('date') or r.get('occasion'):
-                m = ' · '.join(x for x in [r.get('date', ''), r.get('occasion', '')] if x)
+            if r.get('date') or r.get('occasion') or r.get('added'):
+                m = ' · '.join(x for x in [r.get('date', ''), r.get('occasion', ''), r.get('added', '')] if x)
                 lines.append(f"  - 元信息:{m}")
         lines.append('')
     return '\n'.join(lines)

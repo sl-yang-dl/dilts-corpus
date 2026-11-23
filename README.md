@@ -14,7 +14,7 @@
 ## 文件结构
 | 路径 | 内容 | 说明 |
 |------|------|------|
-| `data/quotes.csv` | **语录单一数据源** | 追加行即可;含 `date`/`occasion` 元信息列(可留空) |
+| `data/quotes.csv` | **语录单一数据源** | 追加行即可;含 `date`/`occasion`/`added` 元信息列(可留空) |
 | `data/terms.csv` | **术语单一数据源** | 解释 NLP / 迪尔茨专有概念 |
 | `data/books.csv` | **作品单一数据源** | 他所有作品一览 + 简介 |
 | `site/bio.ts` | **迪尔茨生平(结构化)** | 网站「关于」页时间线数据,驱动 `BioPage.vue` |
@@ -40,11 +40,12 @@
 ```csv
 new-id,quote,逻辑层次,逻辑层次中越上层对越下层组织力越强。,02-models.md#1,high,逻辑层次,,
 ```
-字段:`id, category, theme, zh, source, confidence, topic, date, occasion`
+字段:`id, category, theme, zh, source, confidence, topic, date, occasion, added`
 - `category`:`quote` / `quote_pending` / `avoid` / `model` / `excerpt`(著作已独立到 `books.csv`,此处勿用 `book`)
 - `theme`:所属主题(决定在语录集里的章节,如 `逻辑层次` `迪士尼策略`)
 - `zh`:语录中文;`source`:出处;`confidence`:上述三档之一;`topic`:短标签
 - `date` / `occasion`:**可选元信息**(如 `1990`、`某工作坊`)——需要时填,留空则不显示
+- `added`:**追加日期**(你把它收进语录集的日期,如 `2026-11-23`)——用于追溯收录时间,可与 `date`(语录内容所属年代)区分;旧的批量导入条目已用 git 首次提交日期回填,新条目建议你手动填入
 
 **加一条术语** → 在 `data/terms.csv` 末尾追加一行:
 ```csv
